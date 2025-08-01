@@ -1,0 +1,271 @@
+---
+- name: Read State and Set Variables
+  hosts: 192.168.56.102
+  gather_facts: false
+
+  vars:
+    state_file: "/var/tmp/workflow_state_manual-run.json"
+
+  tasks:
+    - name: "FAIL if state file is missing"
+      stat:
+        path: "{{ state_file }}"
+      register: state_file_stat
+      failed_when: not state_file_stat.stat.exists
+    
+    - name: "Read current state"
+      slurp:
+        src: "{{ state_file }}"
+      register: current_state_raw
+
+    - name: "Set facts from state file"
+      ansible.builtin.set_fact:
+        current_state: "{{ current_state_raw.content | b64decode | from_json }}"
+
+- name: Cek ROLE database untuk env profile .IDFGICU1 DEV 
+  hosts: 192.168.1.211
+  gather_facts: no
+  vars:
+    state_file: "/var/tmp/workflow_state_manual-run.json"
+    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+  tasks:
+    - name: Cek role di ENV .IDFGICU1
+      shell: |
+        source ~/.IDFGICU1
+        export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+        export ORACLE_SID=orcl
+        export PATH=$PATH:$ORACLE_HOME/bin
+        echo 'SET HEADING OFF
+        SET FEEDBACK OFF
+        SELECT database_role FROM v$database; 
+        EXIT;' | sqlplus -s / as sysdba
+      register: db1_role_idfgicu1
+      ignore_errors: yes
+
+    - name: Display the output
+      debug: msg="{{ db1_role_idfgicu1.stdout }}"
+
+    - name: Display database role for PRIMARY
+      debug:
+        msg: "BTR_CU1"
+      register: prim
+      when: "'PRIMARY' in db1_role_idfgicu1.stdout"
+
+    - name: Display database role for STANDBY
+      debug:
+        msg: "BTR_CU1"
+      register: stby
+      when: "'PHYSICAL STANDBY' in db1_role_idfgicu1.stdout"
+
+    - name: Set DB Primary
+      set_fact:
+        updates_to_apply:
+          primary_db_IDFGICU1: "192.168.1.211"
+      when: "'PRIMARY' in db1_role_idfgicu1.stdout"
+
+    - name: Set DB Standby
+      set_fact:
+        updates_to_apply:
+          standby_db_IDFGICU1: "192.168.1.211"
+      when: "'PHYSICAL STANDBY' in db1_role_idfgicu1.stdout"
+
+    - name: Update state file with new values
+      delegate_to: 192.168.56.102
+      run_once: true
+      block:
+        - name: "Apply multiple updates to state file"
+          set_fact:
+            updated_state_dict: "{{ current_state | combine(updates_to_apply, recursive=True) }}"
+        
+        - name: "Write updated state to file"
+          copy:
+            dest: "{{ state_file }}"
+            content: "{{ updated_state_dict | to_json(indent=2) }}"
+            mode: '0644'
+
+###########
+
+- name: Cek ROLE database untuk env profile .IDFGICU1 UAT
+  hosts: 192.168.1.222
+  gather_facts: no
+  vars:
+    state_file: "/var/tmp/workflow_state_manual-run.json"
+    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+  tasks:
+    - name: Cek role di ENV .IDFGICU1
+      shell: |
+        source ~/.IDFGICU1
+        export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+        export ORACLE_SID=orcl
+        export PATH=$PATH:$ORACLE_HOME/bin
+        echo 'SET HEADING OFF
+        SET FEEDBACK OFF
+        SELECT database_role FROM v$database; 
+        EXIT;' | sqlplus -s / as sysdba
+      register: db2_role_idfgicu1
+      ignore_errors: yes
+
+    - name: Display the output
+      debug: msg="{{ db2_role_idfgicu1.stdout }}"
+
+    - name: Display database role for PRIMARY
+      debug:
+        msg: "NTT_CU1"
+      register: prim
+      when: "'PRIMARY' in db2_role_idfgicu1.stdout"
+
+    - name: Display database role for STANDBY
+      debug:
+        msg: "NTT_CU1"
+      register: stby
+      when: "'PHYSICAL STANDBY' in db2_role_idfgicu1.stdout"
+
+    - name: Set DB Primary
+      set_fact:
+        updates_to_apply:
+          primary_db_IDFGICU1: "192.168.1.222"
+      when: "'PRIMARY' in db2_role_idfgicu1.stdout"
+
+    - name: Set DB Standby
+      set_fact:
+        updates_to_apply:
+          standby_db_IDFGICU1: "192.168.1.222"
+      when: "'PHYSICAL STANDBY' in db2_role_idfgicu1.stdout"
+    
+    - name: Update state file with new values
+      delegate_to: 192.168.56.102
+      run_once: true
+      block:
+        - name: "Apply multiple updates to state file"
+          set_fact:
+            updated_state_dict: "{{ current_state | combine(updates_to_apply, recursive=True) }}"
+
+        - name: "Write updated state to file"
+          copy:
+            dest: "{{ state_file }}"
+            content: "{{ updated_state_dict | to_json(indent=2) }}"
+            mode: '0644'
+
+###########
+- name: Cek ROLE database untuk env profile .IDFGISU1 DEV
+  hosts: 192.168.1.211
+  gather_facts: no
+  vars:
+    state_file: "/var/tmp/workflow_state_manual-run.json"
+    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+  tasks:
+    - name: Cek role di ENV .IDFGISU1
+      shell: |
+        source ~/.IDFGISU1
+        export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+        export ORACLE_SID=orcl
+        export PATH=$PATH:$ORACLE_HOME/bin
+        echo 'SET HEADING OFF
+        SET FEEDBACK OFF
+        SELECT database_role FROM v$database; 
+        EXIT;' | sqlplus -s / as sysdba
+      register: db1_role_idfgisu1
+      ignore_errors: yes
+
+    - name: Display the output
+      debug: msg="{{ db1_role_idfgisu1.stdout }}"
+
+    - name: Display database role for PRIMARY
+      debug:
+        msg: "BTR_SU1"
+      register: prim
+      when: "'PRIMARY' in db1_role_idfgisu1.stdout"
+
+    - name: Display database role for STANDBY
+      debug:
+        msg: "BTR_SU1"
+      register: stby
+      when: "'PHYSICAL STANDBY' in db1_role_idfgisu1.stdout"
+
+    - name: Set DB Primary
+      set_fact:
+        updates_to_apply:
+          primary_db_IDFGISU1: "192.168.1.211"
+      when: "'PRIMARY' in db1_role_idfgisu1.stdout"
+
+    - name: Set DB Standby
+      set_fact:
+        updates_to_apply:
+          standby_db_IDFGISU1: "192.168.1.211"
+      when: "'PHYSICAL STANDBY' in db1_role_idfgisu1.stdout"
+
+    - name: Update state file with new values
+      delegate_to: 192.168.56.102
+      run_once: true
+      block:
+        - name: "Apply multiple updates to state file"
+          set_fact:
+            updated_state_dict: "{{ current_state | combine(updates_to_apply, recursive=True) }}"
+
+        - name: "Write updated state to file"
+          copy:
+            dest: "{{ state_file }}"
+            content: "{{ updated_state_dict | to_json(indent=2) }}"
+            mode: '0644'
+
+###########
+- name: Cek ROLE database untuk env profile .IDFGISU1 UAT
+  hosts: 192.168.1.222
+  gather_facts: no
+  vars:
+    state_file: "/var/tmp/workflow_state_manual-run.json"
+    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+  tasks:
+    - name: Cek role di ENV .IDFGISU1
+      shell: |
+        source ~/.IDFGISU1
+        export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+        export ORACLE_SID=orcl
+        export PATH=$PATH:$ORACLE_HOME/bin
+        echo 'SET HEADING OFF
+        SET FEEDBACK OFF
+        SELECT database_role FROM v$database; 
+        EXIT;' | sqlplus -s / as sysdba
+      register: db2_role_idfgisu1
+      ignore_errors: yes
+
+    - name: Display the output
+      debug: msg="{{ db2_role_idfgisu1.stdout }}"
+
+    - name: Display database role for PRIMARY
+      debug:
+        msg: "NTT_SU1"
+      register: prim
+      when: "'PRIMARY' in db2_role_idfgisu1.stdout"
+
+    - name: Display database role for STANDBY
+      debug:
+        msg: "NTT_SU1"
+      register: stby
+      when: "'PHYSICAL STANDBY' in db2_role_idfgisu1.stdout"
+
+    - name: Set DB Primary
+      set_fact:
+        updates_to_apply:
+          primary_db_IDFGISU1: "192.168.1.222"
+      when: "'PRIMARY' in db2_role_idfgisu1.stdout"
+
+    - name: Set DB Standby
+      set_fact:
+        updates_to_apply:
+          standby_db_IDFGISU1: "192.168.1.222"
+      when: "'PHYSICAL STANDBY' in db2_role_idfgisu1.stdout"
+
+    - name: Update state file with new values
+      delegate_to: 192.168.56.102
+      run_once: true
+      block:
+        - name: "Apply multiple updates to state file"
+          set_fact:
+            updated_state_dict: "{{ current_state | combine(updates_to_apply, recursive=True) }}"
+
+        - name: "Write updated state to file"
+          copy:
+            dest: "{{ state_file }}"
+            content: "{{ updated_state_dict | to_json(indent=2) }}"
+            mode: '0644'

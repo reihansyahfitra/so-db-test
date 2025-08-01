@@ -1,0 +1,28 @@
+---
+- name: Initialize State
+  hosts: 192.168.56.102
+  gather_facts: false
+
+  vars:
+    state_file: "/var/tmp/workflow_state_manual-run.json"
+
+  tasks:
+    - name: "Init or Read State"
+      run_once: true
+      block:
+        - name: "Check for existing state file"
+          stat:
+            path: "{{ state_file }}"
+          register: state_file_stat
+
+        - name: "Create new state file"
+          when: not state_file_stat.stat.exists
+          copy:
+            dest: "{{ state_file }}"
+            content: |
+              {
+                "standby_db_IDFGICU1": "",
+                "primary_db_IDFGICU1": "",
+                "standby_db_IDFGISU1": "",
+                "primary_db_IDFGISU1": ""
+              }
