@@ -27,7 +27,7 @@
   gather_facts: no
   vars:
     state_file: "/var/tmp/workflow_state_manual-run.json"
-    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+    current_state: "{{ hostvars['192.168.1.211']['current_state'] }}"
   tasks:
     - name: Cek role di ENV .IDFGICU1
       shell: |
@@ -90,7 +90,7 @@
   gather_facts: no
   vars:
     state_file: "/var/tmp/workflow_state_manual-run.json"
-    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+    current_state: "{{ hostvars['192.168.1.211']['current_state'] }}"
   tasks:
     - name: Cek role di ENV .IDFGICU1
       shell: |
@@ -152,7 +152,7 @@
   gather_facts: no
   vars:
     state_file: "/var/tmp/workflow_state_manual-run.json"
-    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+    current_state: "{{ hostvars['192.168.1.211']['current_state'] }}"
   tasks:
     - name: Cek role di ENV .IDFGISU1
       shell: |
@@ -214,7 +214,7 @@
   gather_facts: no
   vars:
     state_file: "/var/tmp/workflow_state_manual-run.json"
-    current_state: "{{ hostvars['192.168.56.102']['current_state'] }}"
+    current_state: "{{ hostvars['192.168.1.211']['current_state'] }}"
   tasks:
     - name: Cek role di ENV .IDFGISU1
       shell: |
