@@ -1,10 +1,10 @@
 ---
 - name: MFGI_UAT_DB_IDFGISU_CHECK_REPLICATION_PRIMARY_TO_STANDBY_UAT
-  hosts: db_uat_servers
+  hosts: "{{ standby_db_IDFGISU1 }}"
   gather_facts: no
   tasks:
     - name: Load environment Oracle
-      shell: ". .IDFGICU1"
+      shell: ". .IDFGISU1"
       args:
         executable: /bin/bash
       

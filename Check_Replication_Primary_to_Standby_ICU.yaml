@@ -1,6 +1,6 @@
 ---
-- name: MFGI_UAT_DB_IDFGISU_CHECK_REPLICATION_PRIMARY_TO_STANDBY_UAT
-  hosts: db_uat_servers
+- name: MFGI_UAT_DB_IDFGICU_CHECK_REPLICATION_PRIMARY_TO_STANDBY_UAT
+  hosts: "{{ standby_db_IDFGICU1 }}"
   gather_facts: no
   tasks:
     - name: Load environment Oracle

@@ -1,6 +1,6 @@
 ---
 - name: MFGI_UAT_DB_IDFGISU_CHECK_GAP_REP_DEV
-  hosts: db_dev_servers
+  hosts: "{{ standby_db_IDFGISU1 }}"
   gather_facts: no
   tasks:
     - name: Load environment Oracle
