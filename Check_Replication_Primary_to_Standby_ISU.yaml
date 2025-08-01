@@ -1,0 +1,32 @@
+---
+- name: MFGI_UAT_DB_IDFGISU_CHECK_REPLICATION_PRIMARY_TO_STANDBY_UAT
+  hosts: db_uat_servers
+  gather_facts: no
+  tasks:
+    - name: Load environment Oracle
+      shell: ". .IDFGICU1"
+      args:
+        executable: /bin/bash
+      
+    - name: "11 | MFGI_UAT_DB_IDFGICU_CHECK_REPLICATION_PRIMARY_TO_STANDBY"
+      ansible.builtin.shell: |
+        . /home/oracle/.bash_profile
+        export ORACLE_SID=IDFGISU1
+        sqlplus -s / as sysdba <<EOF
+        alter system archive log current;
+        alter system archive log current;
+        alter system archive log current;
+        EXIT;
+        EOF
+      args:
+        executable: /bin/bash
+      register: archive_log_result
+
+    - name: Validasi hasil archive log
+      fail:
+        msg: "Perintah archive log gagal: {{ archive_log_result.stdout }}"
+      when: "'System altered' not in archive_log_result.stdout"
+
+    - name: Tampilkan hasil perintah archive log
+      debug:
+        var: archive_log_result.stdout
