@@ -1,6 +1,6 @@
 ---
 - name: Initialize State
-  hosts: localhost
+  hosts: 192.168.56.102
   gather_facts: false
 
   vars:

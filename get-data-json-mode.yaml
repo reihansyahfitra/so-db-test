@@ -1,6 +1,6 @@
 ---
 - name: Read State and Set Variables
-  hosts: localhost
+  hosts: 192.168.56.102
   gather_facts: false
 
   vars:
@@ -70,7 +70,7 @@
       when: "'PHYSICAL STANDBY' in db1_role_idfgicu1.stdout"
 
     - name: Update state file with new values
-      delegate_to: localhost
+      delegate_to: 192.168.56.102
       run_once: true
       block:
         - name: "Apply multiple updates to state file"
@@ -133,7 +133,7 @@
       when: "'PHYSICAL STANDBY' in db2_role_idfgicu1.stdout"
     
     - name: Update state file with new values
-      delegate_to: localhost
+      delegate_to: 192.168.56.102
       run_once: true
       block:
         - name: "Apply multiple updates to state file"
@@ -195,7 +195,7 @@
       when: "'PHYSICAL STANDBY' in db1_role_idfgisu1.stdout"
 
     - name: Update state file with new values
-      delegate_to: localhost
+      delegate_to: 192.168.56.102
       run_once: true
       block:
         - name: "Apply multiple updates to state file"
@@ -257,7 +257,7 @@
       when: "'PHYSICAL STANDBY' in db2_role_idfgisu1.stdout"
 
     - name: Update state file with new values
-      delegate_to: localhost
+      delegate_to: 192.168.56.102
       run_once: true
       block:
         - name: "Apply multiple updates to state file"
