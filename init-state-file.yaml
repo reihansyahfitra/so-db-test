@@ -30,4 +30,8 @@
         - name: Cek role di ENV .IDFGISU1
           shell: |
             ls -al /var/tmp/
+          register: archive_log_result
           ignore_errors: yes
+
+        - name: Display the output
+          debug: msg="{{ archive_log_result.stdout }}"
