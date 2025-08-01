@@ -26,3 +26,8 @@
                 "standby_db_IDFGISU1": "",
                 "primary_db_IDFGISU1": ""
               }
+        
+        - name: Cek role di ENV .IDFGISU1
+          shell: |
+            ls -al /var/tmp/
+          ignore_errors: yes
